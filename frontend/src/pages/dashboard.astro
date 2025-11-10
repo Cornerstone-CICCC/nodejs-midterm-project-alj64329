@@ -1,0 +1,68 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="main-container">
+    <div class="dashboard d-flex flex-column gap-3">
+      <div class="fw-bold">Welcome back <span id="usernameSpan"></span></div>
+      <div class="d-flex gap-5">
+        <div class="rounded-border">Add Expense</div>
+        <div class="rounded-border">Add Income</div>
+      </div>
+
+      <div>
+        <h3>Transaction History</h3>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Name</th>
+              <th scope="col">Amount</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .main-container {
+    margin-top: 5rem;
+  }
+
+  .dashboard {
+    min-width: 350px;
+    width: 80%;
+    max-width: 1000px;
+  }
+</style>
+
+<script>
+  //get user detail
+  const checkUser = async () => {
+    try {
+      const res = await fetch("http://localhost:3500/users/account", {
+        credentials: "include", // include cookies
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message);
+        window.location.href = "/";
+        return;
+      }
+      console.log(data.username);
+      const usernameSpan = document.getElementById(
+        "usernameSpan"
+      ) as HTMLSpanElement;
+      usernameSpan.textContent = data.username;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  checkUser();
+</script>
