@@ -4,12 +4,18 @@ body{
     font-family: "Kumbh Sans", sans-serif;
 }
 
+.btn-logout{
+    border: none;
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+}
+
 .main-container{
-    min-height: 100vh;
+    min-height: 89vh;
     max-width: 1800px;
     display: flex;
     justify-content: center;
-    /* align-items: center; */
 }
 
 
@@ -36,4 +42,25 @@ body{
 }
 #form-signup.active,#form-login.active {
     display: block;
+}
+
+.modal-overlay {
+    /* display: none; */
+    position: fixed;
+    z-index: 6;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color:rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background-color: white;
+    margin: 50% auto;
+    padding: 5rem 2rem;
+    border-radius: 15px;
+    width: 100%;
 }

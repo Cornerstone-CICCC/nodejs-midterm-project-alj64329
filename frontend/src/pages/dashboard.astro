@@ -5,25 +5,39 @@ import Layout from "../layouts/Layout.astro";
 <Layout>
   <div class="main-container">
     <div class="dashboard d-flex flex-column gap-3">
-      <div class="fw-bold">Welcome back <span id="usernameSpan"></span></div>
+      <div class="d-flex flex-column gap-3 flex-lg-row justify-content-between">
+        <div class="fw-bold welcome-text">
+          Welcome back <span id="usernameSpan"></span>
+        </div>
+        <div>
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="See transaction..."
+          />
+        </div>
+      </div>
       <div class="d-flex gap-5">
-        <div class="rounded-border">Add Expense</div>
-        <div class="rounded-border">Add Income</div>
+        <div class="rounded-border expense-btn">Add Expense</div>
+        <div class="rounded-border income-btn">Add Income</div>
       </div>
 
       <div>
         <h3>Transaction History</h3>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Name</th>
-              <th scope="col">Amount</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-        </table>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Name</th>
+                <th scope="col">Amount</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody class="table-body"> </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -38,10 +52,62 @@ import Layout from "../layouts/Layout.astro";
     min-width: 350px;
     width: 80%;
     max-width: 1000px;
+    padding: 0 2rem;
+  }
+
+  .welcome-text {
+    font-size: 36px;
+  }
+
+  .rounded-border {
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0.4rem 1.1rem;
+  }
+
+  .expense-btn {
+    color: #da0b0b;
+    background-color: #ffadad;
+  }
+
+  .income-btn {
+    color: #02680e;
+    background-color: #abe6b8;
+  }
+  h3 {
+    padding-bottom: 1.2rem;
+  }
+  .table-container {
+    padding: 0.5rem;
+    padding-bottom: 1rem;
+    font-size: 12px;
+    border-radius: 10px;
+    box-shadow:
+      0 4px 8px 0 rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  tr {
+    display: flex;
+    justify-content: space-between;
+  }
+  thead {
+    background-color: #e2e8f0;
+  }
+  th {
+    background-color: transparent;
+  }
+
+  @media screen and (min-width: 768px) {
+    .table-container {
+      font-size: 16px;
+    }
   }
 </style>
 
 <script>
+  document.querySelector(".expense-btn")?.addEventListener("click", () => {});
+  let userId: string;
   //get user detail
   const checkUser = async () => {
     try {
@@ -54,15 +120,42 @@ import Layout from "../layouts/Layout.astro";
         window.location.href = "/";
         return;
       }
-      console.log(data.username);
+
       const usernameSpan = document.getElementById(
         "usernameSpan"
       ) as HTMLSpanElement;
       usernameSpan.textContent = data.username;
+      userId = data.userId;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  //get transactions
+  const renderTransaction = async () => {
+    try {
+      const res = await fetch(`http://localhost:3500/transactions`, {
+        credentials: "include", // include cookies
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message);
+        window.location.href = "/";
+        return;
+      }
+      console.log(data);
+      const tableBody = document.querySelector(".table-body") as HTMLDivElement;
+      if (data.length === 0) {
+        const container = document.createElement("div");
+        container.style.padding = "1rem 0 0 0";
+        container.innerText = "There is no transaction";
+        tableBody.style.textAlign = "center";
+        tableBody.appendChild(container);
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
   checkUser();
+  renderTransaction();
 </script>

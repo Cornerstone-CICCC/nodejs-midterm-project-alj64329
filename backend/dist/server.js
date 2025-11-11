@@ -24,7 +24,7 @@ app.use((0, cookie_session_1.default)({
         process.env.COOKIE_PRIMARY_KEY,
         process.env.COOKIE_SECONDARY_KEY
     ],
-    maxAge: 3 * 60 * 1000 * 10
+    // maxAge:3*60*1000*10
 }));
 app.use(express_1.default.json());
 app.use('/users', user_routes_1.default);

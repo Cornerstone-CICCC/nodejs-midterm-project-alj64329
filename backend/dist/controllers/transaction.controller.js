@@ -16,13 +16,15 @@ const transaction_model_1 = __importDefault(require("../models/transaction.model
 /**
  * Display all Transaction by id
  *
- * @route GET /transactions/user/:id
- * @param {Request<{id: string}>} req
+ * @route GET /transactions
+ * @param {Request} req
  * @param {Response} res
  * @returns {void} Respond with success/fail.
  */
 const getTransactionsByUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.params;
+    var _a, _b;
+    console.log((_a = req.session) === null || _a === void 0 ? void 0 : _a.userId);
+    const userId = (_b = req.session) === null || _b === void 0 ? void 0 : _b.userId;
     if (!userId.trim()) {
         res.status(500).send("Missing user id!");
         return;

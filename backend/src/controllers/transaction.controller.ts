@@ -6,13 +6,14 @@ import { Transaction } from '../types/transaction'
 /**
  * Display all Transaction by id
  * 
- * @route GET /transactions/user/:id
- * @param {Request<{id: string}>} req
+ * @route GET /transactions
+ * @param {Request} req
  * @param {Response} res
  * @returns {void} Respond with success/fail.
  */
-const getTransactionsByUserId = async (req: Request<{userId:string}>, res: Response) => {
-  const { userId } = req.params
+const getTransactionsByUserId = async (req: Request, res: Response) => {
+  console.log(req.session?.userId)
+  const  userId  = req.session?.userId
   if (!userId.trim()) {
     res.status(500).send("Missing user id!")
     return

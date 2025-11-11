@@ -10,5 +10,6 @@ const userRouter = (0, express_1.Router)();
 userRouter.post('/signup', auth_middleware_1.checkLogout, user_controllers_1.default.signup);
 userRouter.post('/login', auth_middleware_1.checkLogout, user_controllers_1.default.login);
 userRouter.get('/account', auth_middleware_1.checkLogin, user_controllers_1.default.getAccount);
+userRouter.get('/check-auth', user_controllers_1.default.checkAuth);
 userRouter.get('/logout', auth_middleware_1.checkLogin, user_controllers_1.default.logout);
 exports.default = userRouter;

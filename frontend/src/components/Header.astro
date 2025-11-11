@@ -1,0 +1,55 @@
+<header class="d-flex justify-content-between">
+  <div>Logo</div>
+
+  <div class="account-service"></div>
+</header>
+
+<script>
+  const serviceDiv = document.querySelector(
+    ".account-service"
+  ) as HTMLDivElement;
+
+  // Get account details
+  const checkAuth = async () => {
+    try {
+      const res = await fetch("http://localhost:3500/users/check-auth", {
+        credentials: "include", // include cookies
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.loggedIn) {
+        return;
+      }
+      serviceDiv.innerHTML = `
+        <button class="btn-logout">Log Out</button>`;
+      // Log out
+      const btnLogout = document.querySelector(
+        ".btn-logout"
+      ) as HTMLButtonElement;
+      btnLogout.addEventListener("click", async () => {
+        try {
+          await fetch("http://localhost:3500/users/logout", {
+            credentials: "include",
+          });
+          window.location.href = "/"; // redirect to home
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  checkAuth();
+</script>
+
+<style>
+  header {
+    background-color: black;
+    color: white;
+    padding: 1.5rem 2rem;
+    font-weight: bold;
+    max-width: 1600px;
+  }
+</style>

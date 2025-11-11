@@ -24,7 +24,7 @@ app.use(cookieSession({
         process.env.COOKIE_PRIMARY_KEY,
         process.env.COOKIE_SECONDARY_KEY
     ],
-    maxAge:3*60*1000*10
+    // maxAge:3*60*1000*10
 }))
 app.use(express.json())
 

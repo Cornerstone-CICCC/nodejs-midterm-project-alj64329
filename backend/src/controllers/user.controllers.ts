@@ -31,6 +31,25 @@ const signup = async (req: Request<{}, {}, Omit<User,'id'>>, res: Response) => {
 }
 
 /**
+ * Check-auth
+ * 
+ * @route GET /users/check-auth
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {void} 
+ */
+const  checkAuth = (req:Request, res:Response)=>{
+  if (!req.session || !req.session.username) {
+    res.status(401).json({
+      loggedIn:false
+    })
+    return
+  }
+  res.status(200).json({
+    loggedIn:true
+  })
+}
+/**
  * Log in (check user)
  * 
  * @route POST /users/login
@@ -87,7 +106,8 @@ const getAccount = (req: Request, res: Response) => {
     return
   }
   res.status(200).json({
-    username: user.username
+    username: user.username,
+    userId:user.id
   })
 }
 
@@ -112,5 +132,6 @@ export default {
   signup,
   login,
   getAccount,
-  logout
+  logout,
+  checkAuth
 }

@@ -4,7 +4,7 @@ exports.checkLogout = exports.checkLogin = void 0;
 const checkLogin = (req, res, next) => {
     if (!req.session || !req.session.username) {
         res.status(401).json({
-            message: "You are not allowed to access this!"
+            message: "You are not logged in"
         });
         return;
     }

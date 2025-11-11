@@ -41,6 +41,25 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 /**
+ * Check-auth
+ *
+ * @route GET /users/check-auth
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {void}
+ */
+const checkAuth = (req, res) => {
+    if (!req.session || !req.session.username) {
+        res.status(401).json({
+            loggedIn: false
+        });
+        return;
+    }
+    res.status(200).json({
+        loggedIn: true
+    });
+};
+/**
  * Log in (check user)
  *
  * @route POST /users/login
@@ -96,7 +115,8 @@ const getAccount = (req, res) => {
         return;
     }
     res.status(200).json({
-        username: user.username
+        username: user.username,
+        userId: user.id
     });
 };
 /**
@@ -119,5 +139,6 @@ exports.default = {
     signup,
     login,
     getAccount,
-    logout
+    logout,
+    checkAuth
 };

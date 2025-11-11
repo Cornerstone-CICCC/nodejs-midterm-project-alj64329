@@ -1,4 +1,5 @@
 ---
+import Modal from "../components/Modal.astro";
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 
@@ -27,6 +28,7 @@ import Layout from "../layouts/Layout.astro";
               name="username"
               id="username"
               placeholder="Username"
+              required
             />
           </div>
           <div class="d-flex flex-column">
@@ -36,8 +38,10 @@ import Layout from "../layouts/Layout.astro";
               name="password"
               id="password"
               placeholder="Password"
+              required
             />
           </div>
+          <div class="err-text err-text-signup"></div>
           <button class="btn border" type="submit">Sign up</button>
         </form>
 
@@ -49,6 +53,7 @@ import Layout from "../layouts/Layout.astro";
               name="username"
               id="username"
               placeholder="Username"
+              required
             />
           </div>
           <div class="d-flex flex-column">
@@ -58,18 +63,21 @@ import Layout from "../layouts/Layout.astro";
               name="password"
               id="password"
               placeholder="Password"
+              required
             />
           </div>
+          <div class="err-text err-text-login"></div>
           <button class="btn" type="submit">Log in</button>
         </form>
       </div>
     </div>
   </div>
+  <Modal />
 </Layout>
 
 <style>
   .main-container {
-    align-items: center;
+    padding-top: 5rem;
   }
   .rounded-border {
     padding: 0.3rem 1rem;
@@ -105,6 +113,15 @@ import Layout from "../layouts/Layout.astro";
       0 6px 20px 0 rgba(0, 0, 0, 0.19);
     padding: 2rem;
     border-radius: 15px;
+    width: 95%;
+    max-width: 500px;
+    height: fit-content;
+  }
+
+  .err-text {
+    font-size: 12px;
+    font-weight: bolder;
+    color: red;
   }
 </style>
 <script>
@@ -130,6 +147,12 @@ import Layout from "../layouts/Layout.astro";
     signupForm?.classList.add("active");
   });
 
+  let errorMsg: string;
+  const signupErr = document.querySelector(
+    ".err-text-signup"
+  ) as HTMLDivElement;
+  const loginErr = document.querySelector(".err-text-login") as HTMLDivElement;
+
   //sign in
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -150,7 +173,8 @@ import Layout from "../layouts/Layout.astro";
       });
       const data = await res.json();
       if (!res.ok) {
-        console.error(data.message);
+        errorMsg = data.message;
+        signupErr.innerText = errorMsg;
         return;
       }
       alert("You can log in");
@@ -166,6 +190,7 @@ import Layout from "../layouts/Layout.astro";
       console.error(err);
     }
   });
+
   //login
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -187,7 +212,8 @@ import Layout from "../layouts/Layout.astro";
       });
       const data = await res.json();
       if (!res.ok) {
-        console.error(data.message);
+        errorMsg = data.message;
+        loginErr.innerText = errorMsg;
         return;
       }
       window.location.href = "/dashboard"; // Redirect to profile page
