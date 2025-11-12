@@ -4,28 +4,160 @@
 
 <div class="modal-overlay">
   <div class="modal-box">
-    <div></div>
-    <form action="" class="d-flex flex-column gap-3">
-      <div class="d-flex flex-column">
-        <label for=""></label>
-        <input type="text" name="type" id="type" required />
+    <div class="icon-container d-flex justify-content-end">
+      <i class="fa-solid fa-xmark close-icon"></i>
+    </div>
+    <form id="transaction-form" class="d-flex flex-column gap-3">
+      <div class="heading-text">Please enter transaction detail</div>
+      <div class="d-flex justify-content-around p">
+        <div class="d-flex flex-row gap-2">
+          <input type="radio" name="type" id="expense" value="expense" />
+          <label for="expense">Expense</label>
+        </div>
+        <div class="d-flex flex-row gap-2">
+          <input type="radio" name="type" id="income" value="income" />
+          <label for="income">Income</label>
+        </div>
       </div>
       <div class="d-flex flex-column">
-        <label for=""></label>
+        <label for="name">Payment To/From</label>
         <input type="text" name="name" id="name" required />
       </div>
-      <div class="d-flex flex-column">
-        <label for=""></label>
-        <input type="text" name="category" id="category" required />
+      <div class="d-flex flex-column category-div">
+        <label for="category">Category</label>
+        <select name="category" id="category">
+          <option value="null"></option>
+          <option value="housing">Housing</option>
+          <option value="transportation">Transportation</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="insurance">Insurance</option>
+          <option value="groceries">Groceries</option>
+          <option value="clothing">clothing</option>
+          <option value="others">Others</option>
+        </select>
       </div>
       <div class="d-flex flex-column">
-        <label for=""></label>
-        <input type="number" name="amount" id="amount" required />
+        <label for="amount">Amount</label>
+        <input type="number" name="amount" id="amount" step="0.01" required />
       </div>
       <div class="d-flex flex-column">
-        <label for=""></label>
+        <label for="date">Payment Date</label>
         <input type="date" name="date" id="date" required />
       </div>
+
+      <button class="btn" type="submit">Add Transaction</button>
     </form>
   </div>
 </div>
+
+<script>
+  import { renderTransaction } from "../lib/util";
+  const modalContainer = document.querySelector(
+    ".modal-overlay"
+  ) as HTMLDivElement;
+  const transactionForm = modalContainer.querySelector(
+    "#transaction-form"
+  ) as HTMLFormElement;
+  //modal close
+  const iconDiv = modalContainer.querySelector(".close-icon") as HTMLElement;
+
+  iconDiv.addEventListener("click", () => {
+    modalContainer.classList.remove("active");
+  });
+
+  //form submission event
+  transactionForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(transactionForm);
+    const type = formData.get("type");
+    const name = formData.get("name");
+    const category = formData.get("category");
+    const amount = formData.get("amount");
+    const date = formData.get("date");
+
+    try {
+      const res = await fetch("http://localhost:3500/transactions", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          type,
+          name,
+          category,
+          amount,
+          date,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+        return;
+      }
+      alert("Transaction added");
+      transactionForm.reset();
+      modalContainer.classList.remove("active");
+      await renderTransaction();
+    } catch (err) {
+      console.log(err);
+    }
+  });
+</script>
+
+<style>
+  label {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0.3rem 1.3rem;
+    border-radius: 15px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    background-color: #f3f1f1;
+    border: none;
+    padding: 0.5rem;
+    font-size: 14px;
+    font-weight: bolder;
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  input[type="radio"] ~ label {
+    opacity: 0.5;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  i {
+    font-size: 26px;
+    cursor: pointer;
+  }
+
+  .icon-container {
+    padding-bottom: 1.5rem;
+  }
+
+  .heading-text {
+    padding-bottom: 1.3rem;
+    margin: 0 auto;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  input[type="radio"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  input[type="radio"]:checked ~ label {
+    background-color: black;
+    opacity: 1;
+    color: white;
+  }
+</style>

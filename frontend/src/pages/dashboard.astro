@@ -1,5 +1,9 @@
 ---
+import Modal from "../components/Modal.astro";
 import Layout from "../layouts/Layout.astro";
+import { renderTransaction } from "../lib/util";
+
+renderTransaction();
 ---
 
 <Layout>
@@ -19,8 +23,12 @@ import Layout from "../layouts/Layout.astro";
         </div>
       </div>
       <div class="d-flex gap-5">
-        <div class="rounded-border expense-btn">Add Expense</div>
-        <div class="rounded-border income-btn">Add Income</div>
+        <div class="rounded-border expense-btn">
+          <i class="fa-solid fa-plus"></i>Add Expense
+        </div>
+        <div class="rounded-border income-btn">
+          <i class="fa-solid fa-dollar-sign"></i>Add Income
+        </div>
       </div>
 
       <div>
@@ -41,6 +49,7 @@ import Layout from "../layouts/Layout.astro";
       </div>
     </div>
   </div>
+  <Modal />
 </Layout>
 
 <style>
@@ -64,6 +73,7 @@ import Layout from "../layouts/Layout.astro";
     font-size: 14px;
     font-weight: bold;
     padding: 0.4rem 1.1rem;
+    cursor: pointer;
   }
 
   .expense-btn {
@@ -87,10 +97,10 @@ import Layout from "../layouts/Layout.astro";
       0 4px 8px 0 rgba(0, 0, 0, 0.2),
       0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
-  tr {
+  /* tr {
     display: flex;
     justify-content: space-between;
-  }
+  } */
   thead {
     background-color: #e2e8f0;
   }
@@ -106,7 +116,20 @@ import Layout from "../layouts/Layout.astro";
 </style>
 
 <script>
-  document.querySelector(".expense-btn")?.addEventListener("click", () => {});
+  import { renderTransaction } from "../lib/util";
+
+  const modal = document.querySelector(".modal-overlay") as HTMLDivElement;
+  //Modal open by clicking either expense or income btn
+  document.querySelector(".expense-btn")?.addEventListener("click", () => {
+    modal.classList.add("active");
+    const expenseInput = modal.querySelector("#expense") as HTMLInputElement;
+    expenseInput.checked = true;
+  });
+  document.querySelector(".income-btn")?.addEventListener("click", () => {
+    modal.classList.add("active");
+    const incomeInput = modal.querySelector("#income") as HTMLInputElement;
+    incomeInput.checked = true;
+  });
   let userId: string;
   //get user detail
   const checkUser = async () => {
@@ -131,31 +154,7 @@ import Layout from "../layouts/Layout.astro";
     }
   };
   //get transactions
-  const renderTransaction = async () => {
-    try {
-      const res = await fetch(`http://localhost:3500/transactions`, {
-        credentials: "include", // include cookies
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.message);
-        window.location.href = "/";
-        return;
-      }
-      console.log(data);
-      const tableBody = document.querySelector(".table-body") as HTMLDivElement;
-      if (data.length === 0) {
-        const container = document.createElement("div");
-        container.style.padding = "1rem 0 0 0";
-        container.innerText = "There is no transaction";
-        tableBody.style.textAlign = "center";
-        tableBody.appendChild(container);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  renderTransaction();
 
   checkUser();
-  renderTransaction();
 </script>

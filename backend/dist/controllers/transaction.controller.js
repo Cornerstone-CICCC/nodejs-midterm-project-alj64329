@@ -42,13 +42,15 @@ const getTransactionsByUserId = (req, res) => __awaiter(void 0, void 0, void 0, 
  * Add transaction
  *
  * @route POST /transaction
- * @param {Request<{}, {}, Omit<Transaction, 'id'>>} req
+ * @param {Request<{}, {}, Omit<Transaction, 'id'|'userId'>>} req
  * @param {Response} res
  * @returns {void} Returns created transaction.
  */
 const addTransaction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, type, name, category, amount, date } = req.body;
-    if (!type.trim() || !name.trim() || !category.trim() || !amount || !date) {
+    var _a;
+    const userId = (_a = req.session) === null || _a === void 0 ? void 0 : _a.userId;
+    const { type, name, category, amount, date } = req.body;
+    if (!type.trim() || !name.trim() || !amount || !date || !userId) {
         res.status(500).json({
             message: "Missing detail!"
         });

@@ -45,7 +45,7 @@ body{
 }
 
 .modal-overlay {
-    /* display: none; */
+    display: none;
     position: fixed;
     z-index: 6;
     top: 0;
@@ -57,10 +57,23 @@ body{
     align-items: center;
 }
 
+.modal-overlay.active{
+    display: block;
+}
+
 .modal-box {
     background-color: white;
-    margin: 50% auto;
-    padding: 5rem 2rem;
+    margin: 15% auto;
+    padding: 2rem 2rem;
     border-radius: 15px;
     width: 100%;
+    max-width: 500px;
+}
+
+
+@media screen and (min-width:550px) {
+    .modal-box{
+        margin:4% auto;
+    }
+    
 }

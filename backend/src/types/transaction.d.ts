@@ -5,7 +5,7 @@ export interface Transaction{
     userId: string,
     type: TransactionType,
     name: string,
-    category:ExpenseType,
+    category:ExpenseType| null,
     amount: number,
     date: Date
 }

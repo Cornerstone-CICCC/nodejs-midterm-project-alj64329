@@ -31,14 +31,15 @@ const getTransactionsByUserId = async (req: Request, res: Response) => {
  * Add transaction
  * 
  * @route POST /transaction
- * @param {Request<{}, {}, Omit<Transaction, 'id'>>} req
+ * @param {Request<{}, {}, Omit<Transaction, 'id'|'userId'>>} req
  * @param {Response} res
  * @returns {void} Returns created transaction.
  */
-const addTransaction = async(req: Request<{}, {}, Omit<Transaction, 'id'>>, res: Response) => {
-  const { userId, type, name, category, amount, date } = req.body
+const addTransaction = async(req: Request<{}, {}, Omit<Transaction, 'id'|'userId'>>, res: Response) => {
+  const  userId  = req.session?.userId
+  const { type, name, category, amount, date } = req.body
 
-  if (!type.trim() || !name.trim()|| !category.trim()||!amount|| !date) {
+  if (!type.trim() || !name.trim()|| !amount|| !date||!userId) {
     res.status(500).json({
         message:"Missing detail!"})
     return

@@ -17,8 +17,8 @@ class TransactionModel {
     //get all transaction for specific userId
     getAllByUserId(userId) {
         const filtered = this.transactions.filter(t => t.userId === userId);
-        const sorted = filtered.sort((a, b) => b.date.getTime() - a.date.getTime());
-        return sorted;
+        // const sorted = filtered.sort((a,b)=>b.date.getTime() -a.date.getTime())
+        return filtered;
     }
     // Create transaction
     createTransaction(newTransaction) {
