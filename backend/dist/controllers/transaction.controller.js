@@ -22,10 +22,10 @@ const transaction_model_1 = __importDefault(require("../models/transaction.model
  * @returns {void} Respond with success/fail.
  */
 const getTransactionsByUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    console.log((_a = req.session) === null || _a === void 0 ? void 0 : _a.userId);
-    const userId = (_b = req.session) === null || _b === void 0 ? void 0 : _b.userId;
-    if (!userId.trim()) {
+    var _a;
+    const userId = (_a = req.session) === null || _a === void 0 ? void 0 : _a.userId;
+    console.log("Session at /transactions:", req.session);
+    if (!userId || !userId.trim()) {
         res.status(500).json({
             message: "Missing user id!"
         });

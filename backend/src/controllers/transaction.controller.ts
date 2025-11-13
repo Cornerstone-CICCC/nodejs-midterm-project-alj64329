@@ -12,9 +12,9 @@ import { Transaction } from '../types/transaction'
  * @returns {void} Respond with success/fail.
  */
 const getTransactionsByUserId = async (req: Request, res: Response) => {
-  console.log(req.session?.userId)
   const  userId  = req.session?.userId
-  if (!userId.trim()) {
+  console.log("Session at /transactions:", req.session);
+  if (!userId||!userId.trim()) {
     res.status(500).json({
       message:"Missing user id!"
   })

@@ -27,7 +27,10 @@ export const renderTransaction = async () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        if(typeof window!=="undefined"){
+          alert(data.message);
+        }
+        console.log(data.message)
         window.location.href = "/";
         return;
       }
