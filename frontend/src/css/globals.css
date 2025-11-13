@@ -4,6 +4,10 @@ body{
     font-family: "Kumbh Sans", sans-serif;
 }
 
+input[name="search"]:focus{
+    outline: none;
+}
+
 .btn-logout{
     border: none;
     background-color: transparent;
@@ -18,7 +22,27 @@ body{
     justify-content: center;
 }
 
-
+.result-container{
+    display: none;
+    position: absolute;
+    z-index: 5;
+    top: 100%;
+    max-height: 150px;
+    overflow-y: auto; 
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 0.5rem;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+.result-container.active{
+    display: block;
+}
+.result-card{
+    padding: 0.5rem 0;
+    cursor: pointer;
+}
 .switch{
     padding: 0.5rem 1.3rem;
     border-radius: 25px;
@@ -31,14 +55,14 @@ body{
 
 .btn{
     margin: 2rem auto 0.5rem auto;
-    padding: 0.2rem 5rem;
+    padding: 0.4rem 5rem;
     background-color: black;
     color: white;
     font-weight: bold;
 }
 form#transaction-form .btn{
     margin: 2rem auto 0.5rem auto;
-    padding: 0.2rem 5rem;
+    padding: 0.4rem 5rem;
     background-color: black;
     color: white;
     font-weight: bold;
@@ -51,7 +75,7 @@ form#transaction-form .btn{
     display: block;
 }
 
-.modal-overlay {
+.modal-overlay,.view-modal-overlay {
     display: none;
     position: fixed;
     z-index: 6;
@@ -64,11 +88,11 @@ form#transaction-form .btn{
     align-items: center;
 }
 
-.modal-overlay.active{
+.modal-overlay.active, .view-modal-overlay.active{
     display: block;
 }
 
-.modal-box {
+.modal-box, .view-modal-box {
     background-color: white;
     margin: 15% auto;
     padding: 2rem 2rem;
@@ -100,6 +124,16 @@ table tr div.edit-box.active{
 }
 .btn-add.active, .btn-update.active{
     display: block;
+}
+
+.category-div{
+    display: none;
+    
+}
+
+.category-div.active{
+    display: flex;
+    flex-direction: column;
 }
 
 

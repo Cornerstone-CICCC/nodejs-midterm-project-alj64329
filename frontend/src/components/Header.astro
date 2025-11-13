@@ -1,5 +1,5 @@
 <header class="d-flex justify-content-between">
-  <div>Logo</div>
+  <div class="fs-4">Log$</div>
 
   <div class="account-service"></div>
 </header>
@@ -39,6 +39,7 @@
           await fetch("http://localhost:3500/users/logout", {
             credentials: "include",
           });
+          alert("You will be directing to home");
           window.location.href = "/"; // redirect to home
         } catch (err) {
           console.error(err);
@@ -58,6 +59,7 @@
     color: white;
     padding: 1.5rem 2rem;
     font-weight: bold;
-    max-width: 1600px;
+    max-width: 1800px;
+    margin: 0 auto;
   }
 </style>

@@ -1,0 +1,16 @@
+<div class="view-modal-overlay">
+  <div class="view-modal-box">
+    <div class="icon-container d-flex justify-content-end">
+      <i class="fa-solid fa-xmark close-icon"></i>
+    </div>
+    <div class="detail-container"></div>
+  </div>
+</div>
+
+<script>
+  const modal = document.querySelector(".view-modal-overlay") as HTMLElement;
+
+  modal.querySelector(".close-icon")?.addEventListener("click", () => {
+    modal.classList.remove("active");
+  });
+</script>

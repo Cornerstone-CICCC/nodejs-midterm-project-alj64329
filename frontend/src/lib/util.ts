@@ -1,5 +1,5 @@
   type TransactionType = "expense" | "income";
-  interface Transaction {
+  export interface Transaction {
     id: string;
     userId: string;
     type: TransactionType;
@@ -31,7 +31,7 @@ export const renderTransaction = async () => {
         window.location.href = "/";
         return;
       }
-      console.log(data);
+
       const tableBody = document.querySelector(".table-body") as HTMLDivElement;
       tableBody.innerHTML=""
       if (data.length === 0) {
@@ -71,11 +71,17 @@ export const renderTransaction = async () => {
         tableBody.appendChild(tr);
         const box = tr.querySelector(".edit-box") as HTMLDivElement
 
+        //view event
+        tr.querySelector(".view-btn")?.addEventListener("click",async()=>{
+          const data = (await getTransaction(el.id)) as Transaction
+          renderViewModal(data)
+
+        })
+        //modify event
         tr.querySelector(".edit-btn")?.addEventListener("click",(e)=>{
           e.stopImmediatePropagation()
           box.classList.add("active")
         })
-
 
         //delete event
         tr.querySelector(".delete-btn")?.addEventListener("click",async()=>{
@@ -110,7 +116,20 @@ export const renderTransaction = async () => {
     }
   };
 
+  //get transaction by id
+  export const getTransaction = async(id:string)=>{
+    const res = await fetch(`http://localhost:3500/transactions/${id}`,{
+      method:"Get"
+    })
 
+    if(!res.ok){
+      throw new Error(`Failed to get transaction`)
+    }
+
+    const data = await res.json()
+
+    return data
+  }
   //Delete transaction
   const deleteTransaction = async(id:string)=>{
     const res = await fetch(`http://localhost:3500/transactions/${id}`,{
@@ -171,4 +190,25 @@ export const renderTransaction = async () => {
     }catch(err){
       console.error(err)
     }
+  }
+
+  export const renderViewModal =(data:Transaction)=>{
+    const modal = document.querySelector(".view-modal-overlay") as HTMLElement
+    const detailContainer = modal.querySelector(".detail-container") as HTMLElement
+    modal.classList.add("active")
+
+    detailContainer.innerHTML=""
+
+    detailContainer.innerHTML=`
+    <div class="d-flex flex-column p-5 gap-3 text-center">
+      <div class="fs-1 fw-bold pb-3">$${data.amount}</div> 
+      <div>
+        <span class="fw-bold pe-2">
+        ${data.type==="expense"?"Payment To":"Payment From"}:</span>
+        ${data.name}
+      </div>
+      ${data.type==="expense"?`<div><span class="fw-bold pe-2"">Expense Category:</span>${data.category}</div>`:""}
+      <div><span class="fw-bold pe-2">Payment Date:</span>${data.date}</div>
+    </div>
+    `
   }
