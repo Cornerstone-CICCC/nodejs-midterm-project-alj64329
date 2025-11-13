@@ -1,15 +1,29 @@
-
-import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { Transaction } from '../types/transaction'
+import fs from 'fs'
+import path from 'path'
 
 class TransactionModel {
+  private filePath = path.join(__dirname, "../../data/transactions.json")
   private transactions:Transaction[]=[]
+
+  constructor() {
+    this.load();
+  }
+
+  private save() {
+    fs.writeFileSync(this.filePath, JSON.stringify(this.transactions, null, 2));
+  }
+
+  private load() {
+    if (fs.existsSync(this.filePath)) {
+      this.transactions = JSON.parse(fs.readFileSync(this.filePath, "utf-8"));
+    }
+  }
 
   //get all transaction for specific userId
   getAllByUserId(userId:string){
     const filtered = this.transactions.filter(t=>t.userId === userId)
-    // const sorted = filtered.sort((a,b)=>b.date.getTime() -a.date.getTime())
     return filtered
   }
 
@@ -31,6 +45,7 @@ class TransactionModel {
       amount,
       date
     })
+    this.save()
     return true
   }
 
@@ -42,6 +57,7 @@ class TransactionModel {
 
     const updatedTransaction :Transaction={
         ...this.transactions[foundIndex],
+        type: updates.type ?? this.transactions[foundIndex].type,
         name: updates.name ?? this.transactions[foundIndex].name,
         category: updates.category ?? this.transactions[foundIndex].category,
         amount: updates.amount ?? this.transactions[foundIndex].amount,
@@ -49,6 +65,7 @@ class TransactionModel {
     }
 
     this.transactions[foundIndex]=updatedTransaction
+    this.save()
 
     return updatedTransaction
   }
@@ -66,8 +83,20 @@ class TransactionModel {
     if(foundIndex === -1) return false
 
     this.transactions.splice(foundIndex,1)
+    this.save()
 
     return true
+  }
+
+  //search
+  searchTransaction(keyword:string){
+    const foundTransactions = this.transactions.filter(t=>t.name.toLowerCase().includes(keyword.toLowerCase())||
+      t.category?.toLowerCase().includes(keyword.toLowerCase()))
+
+    if(foundTransactions.length === 0){
+      return "there is no matching"
+    }
+    return foundTransactions
   }
 }
 

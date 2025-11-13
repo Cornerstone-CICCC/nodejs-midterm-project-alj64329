@@ -8,16 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 class TransactionModel {
     constructor() {
+        this.filePath = path_1.default.join(__dirname, "../../data/transactions.json");
         this.transactions = [];
+        this.load();
+    }
+    save() {
+        fs_1.default.writeFileSync(this.filePath, JSON.stringify(this.transactions, null, 2));
+    }
+    load() {
+        if (fs_1.default.existsSync(this.filePath)) {
+            this.transactions = JSON.parse(fs_1.default.readFileSync(this.filePath, "utf-8"));
+        }
     }
     //get all transaction for specific userId
     getAllByUserId(userId) {
         const filtered = this.transactions.filter(t => t.userId === userId);
-        // const sorted = filtered.sort((a,b)=>b.date.getTime() -a.date.getTime())
         return filtered;
     }
     // Create transaction
@@ -37,18 +51,20 @@ class TransactionModel {
                 amount,
                 date
             });
+            this.save();
             return true;
         });
     }
     // update transaction
     updateTransaction(id, updates) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e;
             const foundIndex = this.transactions.findIndex(t => t.id === id);
             if (foundIndex === -1)
                 return null;
-            const updatedTransaction = Object.assign(Object.assign({}, this.transactions[foundIndex]), { name: (_a = updates.name) !== null && _a !== void 0 ? _a : this.transactions[foundIndex].name, category: (_b = updates.category) !== null && _b !== void 0 ? _b : this.transactions[foundIndex].category, amount: (_c = updates.amount) !== null && _c !== void 0 ? _c : this.transactions[foundIndex].amount, date: (_d = updates.date) !== null && _d !== void 0 ? _d : this.transactions[foundIndex].date });
+            const updatedTransaction = Object.assign(Object.assign({}, this.transactions[foundIndex]), { type: (_a = updates.type) !== null && _a !== void 0 ? _a : this.transactions[foundIndex].type, name: (_b = updates.name) !== null && _b !== void 0 ? _b : this.transactions[foundIndex].name, category: (_c = updates.category) !== null && _c !== void 0 ? _c : this.transactions[foundIndex].category, amount: (_d = updates.amount) !== null && _d !== void 0 ? _d : this.transactions[foundIndex].amount, date: (_e = updates.date) !== null && _e !== void 0 ? _e : this.transactions[foundIndex].date });
             this.transactions[foundIndex] = updatedTransaction;
+            this.save();
             return updatedTransaction;
         });
     }
@@ -65,7 +81,20 @@ class TransactionModel {
         if (foundIndex === -1)
             return false;
         this.transactions.splice(foundIndex, 1);
+        this.save();
         return true;
+    }
+    //search
+    searchTransaction(keyword) {
+        const foundTransactions = this.transactions.filter(t => {
+            var _a;
+            return t.name.toLowerCase().includes(keyword.toLowerCase()) ||
+                ((_a = t.category) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(keyword.toLowerCase()));
+        });
+        if (foundTransactions.length === 0) {
+            return "there is no matching";
+        }
+        return foundTransactions;
     }
 }
 exports.default = new TransactionModel;

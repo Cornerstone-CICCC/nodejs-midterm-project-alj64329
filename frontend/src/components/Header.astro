@@ -20,6 +20,14 @@
       if (!res.ok || !data.loggedIn) {
         return;
       }
+      if (window.location.pathname === "/") {
+        serviceDiv.innerHTML = `
+        <div>
+          <a href="/dashboard" class="text-decoration-none text-light">Dashboard</a>
+        <div>
+        `;
+        return;
+      }
       serviceDiv.innerHTML = `
         <button class="btn-logout">Log Out</button>`;
       // Log out

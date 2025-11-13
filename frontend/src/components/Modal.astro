@@ -45,7 +45,8 @@
         <input type="date" name="date" id="date" required />
       </div>
 
-      <button class="btn" type="submit">Add Transaction</button>
+      <button class="btn btn-add" type="submit">Add Transaction</button>
+      <button class="btn btn-update" type="submit">Update</button>
     </form>
   </div>
 </div>
@@ -63,11 +64,13 @@
 
   iconDiv.addEventListener("click", () => {
     modalContainer.classList.remove("active");
+    transactionForm.reset();
   });
 
   //form submission event
   transactionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const btn = e.submitter as HTMLButtonElement;
 
     const formData = new FormData(transactionForm);
     const type = formData.get("type");
@@ -76,32 +79,65 @@
     const amount = formData.get("amount");
     const date = formData.get("date");
 
-    try {
-      const res = await fetch("http://localhost:3500/transactions", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          type,
-          name,
-          category,
-          amount,
-          date,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-        return;
+    if (btn.classList.contains("btn-add")) {
+      try {
+        const res = await fetch("http://localhost:3500/transactions", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            type,
+            name,
+            category,
+            amount,
+            date,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          console.log(data.message);
+          return;
+        }
+        alert("Transaction added");
+        transactionForm.reset();
+        modalContainer.classList.remove("active");
+        await renderTransaction();
+      } catch (err) {
+        console.log(err);
       }
-      alert("Transaction added");
-      transactionForm.reset();
-      modalContainer.classList.remove("active");
-      await renderTransaction();
-    } catch (err) {
-      console.log(err);
+    } else {
+      //update - id is attached to update button
+      try {
+        const id = btn.dataset.id;
+        if (!id) return;
+        const res = await fetch(`http://localhost:3500/transactions/${id}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            type,
+            name,
+            category,
+            amount,
+            date,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          console.log(data.message);
+          return;
+        }
+        alert("Transaction updated");
+        transactionForm.reset();
+        modalContainer.classList.remove("active");
+        await renderTransaction();
+      } catch (err) {
+        console.log(err);
+      }
     }
   });
 </script>

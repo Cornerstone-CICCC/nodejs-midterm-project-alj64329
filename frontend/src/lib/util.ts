@@ -6,7 +6,7 @@
     name: string;
     category: ExpenseType | null;
     amount: number;
-    date: Date;
+    date: string;
   }
 
   type ExpenseType =
@@ -41,19 +41,134 @@ export const renderTransaction = async () => {
         tableBody.style.textAlign = "center";
         tableBody.appendChild(container);
       }
-      data.forEach((el: Transaction) => {
+      const sorted = data.sort((a:Transaction,b:Transaction)=>new Date(b.date).getTime()-new Date(a.date).getTime())
+      
+      sorted.forEach((el: Transaction) => {
         const tr = document.createElement("tr");
+        tr.className="position-relative"
         tr.innerHTML = `
         <td>${el.date}</td>
         <td>${el.name}</td>
         <td class=${el.type === "expense" ? "text-danger" : "text-success"}>
           ${el.type === "expense" ? "-" : "+"}$ ${el.amount}
           </td>
-        <td><i class="fa-solid fa-ellipsis-vertical"></i></td>
+        <td><i class="fa-solid fa-ellipsis-vertical edit-btn"></i></td>
+        <div class="position-absolute edit-box"> 
+          <div class="view-btn text-success d-flex pb-2 gap-1">
+          <i class="fa-solid fa-expand"></i>
+          View
+          </div>
+          <div class="editpen-btn text-danger d-flex pb-2 gap-1">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Edit
+          </div>
+          <div class="delete-btn text-primary d-flex gap-1">
+          <i class="fa-solid fa-trash"></i>
+          Delete
+          </div>
+        </div>
         `;
         tableBody.appendChild(tr);
+        const box = tr.querySelector(".edit-box") as HTMLDivElement
+
+        tr.querySelector(".edit-btn")?.addEventListener("click",(e)=>{
+          e.stopImmediatePropagation()
+          box.classList.add("active")
+        })
+
+
+        //delete event
+        tr.querySelector(".delete-btn")?.addEventListener("click",async()=>{
+          await deleteTransaction(el.id)
+          renderTransaction()
+        })
+
+        //update event
+        tr.querySelector(".editpen-btn")?.addEventListener("click",async()=>{
+          const item = {
+            type:el.type,
+            name:el.name,
+            category:el.category,
+            amount:el.amount,
+            date:el.date
+          }
+          modalSet(el.id,item)
+          document.querySelector(".modal-overlay")?.classList.add("active")
+
+        })
+        
       });
+      //Click outside of edit-box will close edit box
+      document.addEventListener('click', (e)=>{
+          const target = e.target as HTMLElement
+          if(!target.closest(".edit-box") && !target.closest(".edit-btn")){
+            document.querySelectorAll(".edit-box").forEach((box) => box.classList.remove("active"));
+          }
+        })
     } catch (err) {
       console.error(err);
     }
   };
+
+
+  //Delete transaction
+  const deleteTransaction = async(id:string)=>{
+    const res = await fetch(`http://localhost:3500/transactions/${id}`,{
+      method:"Delete"
+    })
+
+    if(!res.ok){
+      throw new Error(`Failed to get transaction`);
+    }
+
+    return alert("Transaction deleted")
+  }
+
+  //update transaction
+  const modalSet = (id:string,{type, name, category, amount, date}:Partial<Transaction>) =>{
+    const nameInput = document.querySelector("#name") as HTMLInputElement
+    const categorySel = document.querySelector("#category") as HTMLSelectElement
+    const amountInput = document.querySelector("#amount") as HTMLInputElement
+    const dateInput = document.querySelector("#date") as HTMLInputElement
+
+    if(type==="expense"){
+      const expenseInput = document.querySelector("#expense") as HTMLInputElement;
+      expenseInput.checked = true;
+    }else{
+      const incomeInput = document.querySelector("#income") as HTMLInputElement;
+      incomeInput.checked = true;
+    }
+
+    nameInput.value=name ||""
+    categorySel.value=category||""
+    amountInput.value=amount?.toString()||""
+    dateInput.value= date ||""
+
+    //update button 
+    const addBtn = document.querySelector(".btn-add") as HTMLButtonElement;
+    const updateBtn = document.querySelector(".btn-update") as HTMLButtonElement;
+
+    addBtn.classList.remove("active")
+    updateBtn.classList.add("active")
+    updateBtn.dataset.id = id
+  }
+
+  //search
+  export const searchTransaction = async(keyword:string)=>{
+    try{
+      const res = await fetch(`http://localhost:3500/transactions/search?name=${keyword}`,{
+          method:"GET",
+          credentials: "include", // include cookies
+        });
+        const data = await res.json();
+
+        if(!res.ok){
+          console.log(data.message)
+          return
+        }
+
+        return data
+    }catch(err){
+      console.error(err)
+    }
+  }

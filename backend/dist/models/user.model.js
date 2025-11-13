@@ -14,9 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 class UserModel {
     constructor() {
+        this.filePath = path_1.default.join(__dirname, "../../data/users.json");
         this.users = [];
+        this.load();
+    }
+    save() {
+        fs_1.default.writeFileSync(this.filePath, JSON.stringify(this.users, null, 2));
+    }
+    load() {
+        if (fs_1.default.existsSync(this.filePath)) {
+            this.users = JSON.parse(fs_1.default.readFileSync(this.filePath, "utf-8"));
+        }
     }
     // Create user
     createUser(newUser) {
@@ -31,6 +43,7 @@ class UserModel {
                 username,
                 password: hashedPassword
             });
+            this.save();
             return true;
         });
     }
@@ -50,6 +63,7 @@ class UserModel {
     // Get user data
     getUser(username) {
         const user = this.users.find(u => u.username === username);
+        console.log(this.users);
         if (!user)
             return false;
         return user;

@@ -13,7 +13,8 @@ renderTransaction();
         <div class="fw-bold welcome-text">
           Welcome back <span id="usernameSpan"></span>
         </div>
-        <div>
+        <div class="d-flex gap-2 align-items-center search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
           <input
             type="text"
             name="search"
@@ -22,7 +23,7 @@ renderTransaction();
           />
         </div>
       </div>
-      <div class="d-flex gap-5">
+      <div class="d-flex gap-5 mx-auto">
         <div class="rounded-border expense-btn">
           <i class="fa-solid fa-plus"></i>Add Expense
         </div>
@@ -59,7 +60,7 @@ renderTransaction();
 
   .dashboard {
     min-width: 350px;
-    width: 80%;
+    width: 85%;
     max-width: 1000px;
     padding: 0 2rem;
   }
@@ -70,10 +71,13 @@ renderTransaction();
 
   .rounded-border {
     border-radius: 15px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    padding: 0.4rem 1.1rem;
+    padding: 0.5rem 1.2rem;
     cursor: pointer;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
   }
 
   .expense-btn {
@@ -108,27 +112,64 @@ renderTransaction();
     background-color: transparent;
   }
 
+  input[name="search"] {
+    border: none;
+  }
+
+  .search-box {
+    margin: 1.5rem auto;
+    border: 2px solid;
+    padding: 0.5rem 2rem;
+    border-radius: 20px;
+  }
+
   @media screen and (min-width: 768px) {
     .table-container {
       font-size: 16px;
+    }
+    .rounded-border {
+      font-size: 16px;
+      padding: 0.6rem 1.4rem;
     }
   }
 </style>
 
 <script>
-  import { renderTransaction } from "../lib/util";
+  import { renderTransaction, searchTransaction } from "../lib/util";
 
   const modal = document.querySelector(".modal-overlay") as HTMLDivElement;
+  const addBtn = modal.querySelector(".btn-add") as HTMLButtonElement;
+  const updateBtn = modal.querySelector(".btn-update") as HTMLButtonElement;
   //Modal open by clicking either expense or income btn
   document.querySelector(".expense-btn")?.addEventListener("click", () => {
     modal.classList.add("active");
     const expenseInput = modal.querySelector("#expense") as HTMLInputElement;
     expenseInput.checked = true;
+
+    //active on add button and deactivate update Button
+    addBtn.classList.add("active");
+    updateBtn.classList.remove("active");
   });
   document.querySelector(".income-btn")?.addEventListener("click", () => {
     modal.classList.add("active");
     const incomeInput = modal.querySelector("#income") as HTMLInputElement;
     incomeInput.checked = true;
+
+    //active on add button and deactivate update Button
+    addBtn.classList.add("active");
+    updateBtn.classList.remove("active");
+  });
+
+  //search event
+  const searchInput = document.querySelector("#search") as HTMLInputElement;
+  searchInput.addEventListener("keyup", async (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const keyword = searchInput.value.trim();
+
+      const data = await searchTransaction(keyword);
+      console.log(data);
+      searchInput.value = "";
+    }
   });
   let userId: string;
   //get user detail
@@ -155,6 +196,5 @@ renderTransaction();
   };
   //get transactions
   renderTransaction();
-
   checkUser();
 </script>

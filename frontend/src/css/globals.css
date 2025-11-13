@@ -36,6 +36,13 @@ body{
     color: white;
     font-weight: bold;
 }
+form#transaction-form .btn{
+    margin: 2rem auto 0.5rem auto;
+    padding: 0.2rem 5rem;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}
 
 #form-signup,#form-login{
     display: none;
@@ -69,11 +76,41 @@ body{
     width: 100%;
     max-width: 500px;
 }
+.edit-btn{
+    cursor: pointer;
+}
+
+table tr div.edit-box{
+    padding: 0.7rem;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    right: -15%;
+    top: 100%;
+    z-index: 2;
+    display: none;
+}
+
+table tr div.edit-box.active{
+    display: block;
+}
+
+.btn-add, .btn-update{
+    display: none;
+}
+.btn-add.active, .btn-update.active{
+    display: block;
+}
 
 
 @media screen and (min-width:550px) {
     .modal-box{
         margin:4% auto;
+    }
+
+    table tr div.edit-box{
+        right: auto;
+        top: auto;
     }
     
 }

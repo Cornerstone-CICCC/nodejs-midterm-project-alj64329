@@ -15,7 +15,9 @@ const getTransactionsByUserId = async (req: Request, res: Response) => {
   console.log(req.session?.userId)
   const  userId  = req.session?.userId
   if (!userId.trim()) {
-    res.status(500).send("Missing user id!")
+    res.status(500).json({
+      message:"Missing user id!"
+  })
     return
   }
   const transactions = transactionModel.getAllByUserId(userId)
@@ -92,11 +94,12 @@ const getTransactionById = (req: Request<{id:string}>, res: Response) => {
 const updateTransactionById = async(req: Request<{id: string}, {}, Partial<Transaction>>, res: Response) => {
   const { id } = req.params
   if (!id.trim()) {
-    res.status(500).send("Missing transaction id!")
+    res.status(500).json({
+      message:"Missing transaction id!"})
     return
   }
-  const {name, category, amount, date} = req.body
-  const transaction = await transactionModel.updateTransaction(id, {name, category, amount, date})
+  const {type, name, category, amount, date} = req.body
+  const transaction = await transactionModel.updateTransaction(id, {type, name, category, amount, date})
   if (!transaction) {
     res.status(404).json({
         message:"Transaction does not exist!"})
@@ -116,7 +119,8 @@ const updateTransactionById = async(req: Request<{id: string}, {}, Partial<Trans
 const deleteTransactionById = (req: Request<{id: string}>, res: Response) => {
   const { id } = req.params
   if (!id.trim()) {
-    res.status(500).send("Missing id!")
+    res.status(500).json({
+      message:"Missing id!"})
     return
   }
   const result = transactionModel.deleteTransaction(id)
@@ -129,10 +133,33 @@ const deleteTransactionById = (req: Request<{id: string}>, res: Response) => {
     message:"Transaction deleted!"})
 }
 
+/**
+* Search employees by firstname.
+* 
+* @route GET /transactions/search?name=somevalue
+* @query {string} name - name to search for.
+* @param {Request<{}, {}, {}, { name: string }>} req - Express request containing query parameters.
+* @param {Response} res - Express response object.
+* @returns {void} Responds with an array of matched user objects or an error message.
+*/
+const searchByKeyword = (req: Request<{}, {}, {}, { name: string }>, res: Response) => {
+  const { name } = req.query
+  const transactions = transactionModel.searchTransaction(name)
+
+  if(!transactions){
+    res.status(404).json({
+      message: "Unfortunately no matching"
+    })
+    return
+  }
+  res.status(200).json(transactions)
+}
+
 export default {
   getTransactionsByUserId,
   addTransaction,
   getTransactionById,
   updateTransactionById,
-  deleteTransactionById
+  deleteTransactionById,
+  searchByKeyword
 }

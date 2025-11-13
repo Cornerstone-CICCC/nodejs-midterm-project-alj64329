@@ -1,9 +1,26 @@
 import { User } from "../types/user";
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
+import path from 'path'
 
 class UserModel {
+  private filePath = path.join(__dirname, "../../data/users.json")
   private users: User[]=[]
+
+  constructor() {
+    this.load();
+  }
+
+  private save() {
+    fs.writeFileSync(this.filePath, JSON.stringify(this.users, null, 2));
+  }
+
+  private load() {
+    if (fs.existsSync(this.filePath)) {
+      this.users = JSON.parse(fs.readFileSync(this.filePath, "utf-8"));
+    }
+  }
 
   // Create user
   async createUser(newUser: Omit<User, 'id'>) {
@@ -18,6 +35,7 @@ class UserModel {
       username,
       password: hashedPassword
     })
+    this.save()
     return true
   }
 
@@ -34,6 +52,7 @@ class UserModel {
   // Get user data
   getUser(username: string) {
     const user = this.users.find(u => u.username === username)
+    console.log(this.users)
     if (!user) return false
     return user
   }

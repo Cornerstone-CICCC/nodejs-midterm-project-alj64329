@@ -26,7 +26,9 @@ const getTransactionsByUserId = (req, res) => __awaiter(void 0, void 0, void 0, 
     console.log((_a = req.session) === null || _a === void 0 ? void 0 : _a.userId);
     const userId = (_b = req.session) === null || _b === void 0 ? void 0 : _b.userId;
     if (!userId.trim()) {
-        res.status(500).send("Missing user id!");
+        res.status(500).json({
+            message: "Missing user id!"
+        });
         return;
     }
     const transactions = transaction_model_1.default.getAllByUserId(userId);
@@ -101,11 +103,13 @@ const getTransactionById = (req, res) => {
 const updateTransactionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id.trim()) {
-        res.status(500).send("Missing transaction id!");
+        res.status(500).json({
+            message: "Missing transaction id!"
+        });
         return;
     }
-    const { name, category, amount, date } = req.body;
-    const transaction = yield transaction_model_1.default.updateTransaction(id, { name, category, amount, date });
+    const { type, name, category, amount, date } = req.body;
+    const transaction = yield transaction_model_1.default.updateTransaction(id, { type, name, category, amount, date });
     if (!transaction) {
         res.status(404).json({
             message: "Transaction does not exist!"
@@ -125,7 +129,9 @@ const updateTransactionById = (req, res) => __awaiter(void 0, void 0, void 0, fu
 const deleteTransactionById = (req, res) => {
     const { id } = req.params;
     if (!id.trim()) {
-        res.status(500).send("Missing id!");
+        res.status(500).json({
+            message: "Missing id!"
+        });
         return;
     }
     const result = transaction_model_1.default.deleteTransaction(id);
@@ -139,10 +145,31 @@ const deleteTransactionById = (req, res) => {
         message: "Transaction deleted!"
     });
 };
+/**
+* Search employees by firstname.
+*
+* @route GET /transactions/search?name=somevalue
+* @query {string} name - name to search for.
+* @param {Request<{}, {}, {}, { name: string }>} req - Express request containing query parameters.
+* @param {Response} res - Express response object.
+* @returns {void} Responds with an array of matched user objects or an error message.
+*/
+const searchByKeyword = (req, res) => {
+    const { name } = req.query;
+    const transactions = transaction_model_1.default.searchTransaction(name);
+    if (!transactions) {
+        res.status(404).json({
+            message: "Unfortunately no matching"
+        });
+        return;
+    }
+    res.status(200).json(transactions);
+};
 exports.default = {
     getTransactionsByUserId,
     addTransaction,
     getTransactionById,
     updateTransactionById,
-    deleteTransactionById
+    deleteTransactionById,
+    searchByKeyword
 };

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const transaction_controller_1 = __importDefault(require("../controllers/transaction.controller"));
 const transactionRouter = (0, express_1.Router)();
+transactionRouter.get('/search', transaction_controller_1.default.searchByKeyword);
 transactionRouter.get('/', transaction_controller_1.default.getTransactionsByUserId);
 transactionRouter.get('/:id', transaction_controller_1.default.getTransactionById);
 transactionRouter.post('/', transaction_controller_1.default.addTransaction);

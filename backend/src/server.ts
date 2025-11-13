@@ -10,7 +10,7 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-  origin: "http://localhost:4323", // Astro url
+  origin: "http://localhost:4321", // Astro url
   credentials: true // Allow cookies from frontend
 }))
 
