@@ -1,0 +1,225 @@
+---
+import Modal from "../components/Modal.astro";
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+  <div class="main-container">
+    <div class="form-card">
+      <div
+        class="d-flex flex-column justify-content-center align-items-center gap-3"
+      >
+        <h2 class="fw-bold">Welcome</h2>
+        <div>Log in or create an account</div>
+        <div class="rounded-border d-flex border">
+          <div class="signup-btn switch active">Sign up</div>
+          <div class="login-btn switch">Log in</div>
+        </div>
+
+        <form action="" id="form-signup" class="active">
+          <div class="d-flex flex-column pb-3">
+            <label for="">Username</label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div class="d-flex flex-column">
+            <label for="">Password</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="err-text err-text-signup"></div>
+          <button class="btn border" type="submit">Sign up</button>
+        </form>
+
+        <form action="" id="form-login">
+          <div class="d-flex flex-column pb-3">
+            <label for="">Username</label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div class="d-flex flex-column">
+            <label for="">Password</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="err-text err-text-login"></div>
+          <button class="btn" type="submit">Log in</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .main-container {
+    padding-top: 5rem;
+    margin: 0 auto;
+  }
+  .rounded-border {
+    padding: 0.3rem 1rem;
+    min-width: 250px;
+    justify-content: space-between;
+    border-radius: 25px;
+    background-color: #d9d9d9;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  label {
+    font-size: 12px;
+    font-weight: bolder;
+  }
+
+  input {
+    background-color: #f3f1f1;
+    border: none;
+    padding: 0.5rem;
+    font-size: 14px;
+    font-weight: bolder;
+  }
+
+  .form-card {
+    box-shadow:
+      0 4px 8px 0 rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 2rem;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 500px;
+    height: fit-content;
+  }
+
+  .err-text {
+    font-size: 12px;
+    font-weight: bolder;
+    color: red;
+  }
+</style>
+<script>
+  const card = document.querySelector(".form-card");
+  const signupForm = document.querySelector("#form-signup") as HTMLFormElement;
+  const loginForm = document.querySelector("#form-login") as HTMLFormElement;
+  card?.querySelector(".login-btn")?.addEventListener("click", () => {
+    //Removing active class from sign up
+    card?.querySelector(".signup-btn")?.classList.remove("active");
+    signupForm?.classList.remove("active");
+
+    //adding active class to login
+    card?.querySelector(".login-btn")?.classList.add("active");
+    loginForm?.classList.add("active");
+  });
+  card?.querySelector(".signup-btn")?.addEventListener("click", () => {
+    //Removing active class from sign up
+    card?.querySelector(".login-btn")?.classList.remove("active");
+    loginForm?.classList.remove("active");
+
+    //adding active class to login
+    card?.querySelector(".signup-btn")?.classList.add("active");
+    signupForm?.classList.add("active");
+  });
+
+  let errorMsg: string;
+  const signupErr = document.querySelector(
+    ".err-text-signup"
+  ) as HTMLDivElement;
+  const loginErr = document.querySelector(".err-text-login") as HTMLDivElement;
+
+  //sign in
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(signupForm);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    try {
+      const res = await fetch("http://localhost:3500/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errorMsg = data.message;
+        signupErr.innerText = errorMsg;
+        return;
+      }
+      alert("Please log in to access your dashboard");
+      signupForm.reset();
+      //Removing active class from sign up
+      card?.querySelector(".signup-btn")?.classList.remove("active");
+      signupForm?.classList.remove("active");
+
+      //adding active class to login
+      card?.querySelector(".login-btn")?.classList.add("active");
+      loginForm?.classList.add("active");
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  //login
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(loginForm);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    try {
+      const res = await fetch("http://localhost:3500/users/login", {
+        method: "POST",
+        credentials: "include", // include cookies
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errorMsg = data.message;
+        loginErr.innerText = errorMsg;
+        return;
+      }
+      window.location.href = "/dashboard"; // Redirect to profile page
+    } catch (err) {
+      // Server is down
+      console.error(err);
+    }
+  });
+</script>

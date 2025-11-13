@@ -1,0 +1,258 @@
+---
+import Modal from "../components/Modal.astro";
+import ViewModal from "../components/ViewModal.astro";
+import Layout from "../layouts/Layout.astro";
+import { renderTransaction } from "../lib/util";
+
+renderTransaction();
+---
+
+<Layout>
+  <div class="main-container">
+    <div class="dashboard d-flex flex-column gap-3 gap-md-5">
+      <div
+        class="d-flex flex-column gap-3 flex-lg-row justify-content-between align-items-center"
+      >
+        <div class="fw-bold welcome-text">
+          Welcome back <span id="usernameSpan"></span>
+        </div>
+        <div
+          class="d-flex gap-2 align-items-center search-box position-relative"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="See transaction..."
+          />
+          <div class="result-container"></div>
+        </div>
+      </div>
+      <div class="d-flex gap-5 mx-auto">
+        <div class="rounded-border expense-btn">
+          <i class="fa-solid fa-plus"></i>Add Expense
+        </div>
+        <div class="rounded-border income-btn">
+          <i class="fa-solid fa-dollar-sign"></i>Add Income
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <h3>Transaction History</h3>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Name</th>
+                <th scope="col">Amount</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody class="table-body"> </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Modal />
+  <ViewModal />
+</Layout>
+
+<style>
+  .main-container {
+    margin: 5rem auto 0 auto;
+  }
+
+  .dashboard {
+    min-width: 350px;
+    width: 85%;
+    max-width: 1000px;
+    padding: 0 2rem;
+  }
+
+  .welcome-text {
+    font-size: 36px;
+  }
+
+  .rounded-border {
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .expense-btn {
+    color: #da0b0b;
+    background-color: #ffadad;
+  }
+
+  .income-btn {
+    color: #02680e;
+    background-color: #abe6b8;
+  }
+  h3 {
+    padding-bottom: 1.2rem;
+  }
+  .table-container {
+    padding: 0.5rem;
+    padding-bottom: 1rem;
+    font-size: 12px;
+    border-radius: 10px;
+    box-shadow:
+      0 4px 8px 0 rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  thead {
+    background-color: #e2e8f0;
+  }
+  th {
+    background-color: transparent;
+  }
+
+  input[name="search"] {
+    border: none;
+  }
+
+  .search-box {
+    margin: 1.5rem auto;
+    border: 2px solid;
+    padding: 0.5rem 2rem;
+    border-radius: 20px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .table-container {
+      font-size: 16px;
+    }
+    .rounded-border {
+      font-size: 20px;
+      padding: 0.6rem 1.4rem;
+    }
+  }
+</style>
+
+<script>
+  import { date } from "astro:schema";
+  import {
+    renderTransaction,
+    searchTransaction,
+    getTransaction,
+    renderViewModal,
+  } from "../lib/util";
+  import type { Transaction } from "../lib/util";
+
+  const modal = document.querySelector(".modal-overlay") as HTMLDivElement;
+  const addBtn = modal.querySelector(".btn-add") as HTMLButtonElement;
+  const updateBtn = modal.querySelector(".btn-update") as HTMLButtonElement;
+  //Modal open by clicking either expense or income btn
+  document.querySelector(".expense-btn")?.addEventListener("click", () => {
+    modal.classList.add("active");
+    const expenseInput = modal.querySelector("#expense") as HTMLInputElement;
+    expenseInput.checked = true;
+    modal.querySelector(".category-div")?.classList.add("active");
+
+    //active on add button and deactivate update Button
+    addBtn.classList.add("active");
+    updateBtn.classList.remove("active");
+  });
+
+  document.querySelector(".income-btn")?.addEventListener("click", () => {
+    modal.classList.add("active");
+    const incomeInput = modal.querySelector("#income") as HTMLInputElement;
+    incomeInput.checked = true;
+    modal.querySelector(".category-div")?.classList.remove("active");
+
+    //active on add button and deactivate update Button
+    addBtn.classList.add("active");
+    updateBtn.classList.remove("active");
+  });
+
+  //search event
+  const searchInput = document.querySelector("#search") as HTMLInputElement;
+  const resultContainer = document.querySelector(
+    ".result-container"
+  ) as HTMLDivElement;
+  searchInput.addEventListener("keyup", async (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const keyword = searchInput.value.trim();
+
+      const data = (await searchTransaction(keyword)) as Transaction[];
+
+      searchInput.value = "";
+
+      //Clear previous result
+      resultContainer.innerHTML = "";
+      resultContainer.classList.add("active");
+
+      if (typeof data === "string") {
+        resultContainer.innerHTML = `
+        <div class="p-2">No ransaction found</div>`;
+      } else {
+        data.map((el) => {
+          const div = document.createElement("div");
+          div.dataset.id = el.id;
+          div.className = "d-flex justify-content-between result-card";
+
+          div.innerHTML = `
+          <div>${el.name}</div>
+          <div>${el.type === "expense" ? "-" : "+"}$${el.amount}</div>
+          `;
+          resultContainer.appendChild(div);
+        });
+
+        resultContainer.querySelectorAll(".result-card").forEach((el) => {
+          el.addEventListener("click", async (e) => {
+            const target = e.target as HTMLDivElement;
+            const id = target.dataset.id as string;
+            if (!id) {
+              return;
+            }
+            const data = await getTransaction(id);
+            renderViewModal(data);
+          });
+        });
+      }
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest(".result-container")) {
+      resultContainer.classList.remove("active");
+    }
+  });
+
+  let userId: string;
+  //get user detail
+  const checkUser = async () => {
+    try {
+      const res = await fetch("http://localhost:3500/users/account", {
+        credentials: "include", // include cookies
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message);
+        window.location.href = "/";
+        return;
+      }
+
+      const usernameSpan = document.getElementById(
+        "usernameSpan"
+      ) as HTMLSpanElement;
+      usernameSpan.textContent = data.username;
+      userId = data.userId;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  //get transactions
+  renderTransaction();
+  checkUser();
+</script>
