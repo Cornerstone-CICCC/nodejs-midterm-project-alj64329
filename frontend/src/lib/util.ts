@@ -85,8 +85,12 @@ export const renderTransaction = async () => {
 
         //delete event
         tr.querySelector(".delete-btn")?.addEventListener("click",async()=>{
-          await deleteTransaction(el.id)
-          renderTransaction()
+          const msg = "Are you sure you want to delete this transaction?"
+          if(confirm(msg)=== true){
+            await deleteTransaction(el.id)
+            renderTransaction()
+            return
+          }
         })
 
         //update event

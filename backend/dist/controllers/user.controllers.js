@@ -107,7 +107,6 @@ const getAccount = (req, res) => {
         return;
     }
     const { username } = req.session;
-    console.log(username);
     const user = user_model_1.default.getUser(username);
     if (!user) {
         res.status(404).json({

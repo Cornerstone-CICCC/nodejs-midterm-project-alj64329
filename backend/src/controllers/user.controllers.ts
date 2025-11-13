@@ -98,7 +98,7 @@ const getAccount = (req: Request, res: Response) => {
     return
   }
   const { username } = req.session
-  console.log(username)
+
   const user = userModel.getUser(username)
   if (!user) {
     res.status(404).json({
