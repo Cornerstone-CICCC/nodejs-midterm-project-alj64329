@@ -70,6 +70,15 @@ class TransactionModel {
     return updatedTransaction
   }
 
+  getThisMonthTransaction(yearMounth:string){
+    
+    const filtered = this.transactions.filter(t => t.date.includes(yearMounth))
+
+    if(!filtered) return false
+
+    return filtered
+  }
+
   // Get transaction data
   getTransaction(expenseId: string) {
     const transaction = this.transactions.find(t => t.id === expenseId)
