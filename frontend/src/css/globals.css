@@ -136,6 +136,26 @@ table tr div.edit-box.active{
     flex-direction: column;
 }
 
+.highlight-border{
+    border-radius: 15px;
+    text-align: center;
+    padding: 0.3rem 1.5rem;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    background-color: lightgrey;
+    color: white;
+    font-size: 12px;
+    width: 120px;
+    height: 120px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.view-btn, .editpen-btn, .delete-btn{
+    cursor: pointer;
+}
+
 
 @media screen and (min-width:550px) {
     .modal-box{
@@ -146,5 +166,22 @@ table tr div.edit-box.active{
         right: auto;
         top: auto;
     }
+
+    .highlight-border{
+        font-size: 20px;
+        width: 130px;
+        height: 130px;
+    }
+    .title-text{
+        font-size: 25px;
+    }
     
+}
+
+@media screen and (min-width:768px) {
+
+    .highlight-border{
+        width: 200px;
+        height: auto;
+    }
 }
