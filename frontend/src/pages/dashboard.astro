@@ -1,4 +1,5 @@
 ---
+import Highlights from "../components/Highlights.astro";
 import Modal from "../components/Modal.astro";
 import ViewModal from "../components/ViewModal.astro";
 import Layout from "../layouts/Layout.astro";
@@ -28,6 +29,10 @@ renderTransaction();
           />
           <div class="result-container"></div>
         </div>
+      </div>
+      <div class="pb-4">
+        <div class="fw-bold title-text pb-2">This Mounth's Highlights</div>
+        <Highlights />
       </div>
       <div class="d-flex gap-5 mx-auto">
         <div class="rounded-border expense-btn">
@@ -193,7 +198,7 @@ renderTransaction();
 
       if (typeof data === "string") {
         resultContainer.innerHTML = `
-        <div class="p-2">No ransaction found</div>`;
+        <div class="p-2">No transaction found</div>`;
       } else {
         data.map((el) => {
           const div = document.createElement("div");

@@ -1,5 +1,9 @@
 ---
-
+const today = new Date();
+const year = today.getFullYear();
+const month = today.getMonth() + 10;
+const date = today.getDate();
+const todayStr = `${year}-${month < 10 ? `0${month}` : `${month}`}-${date}}`;
 ---
 
 <div class="modal-overlay">
@@ -42,7 +46,7 @@
       </div>
       <div class="d-flex flex-column">
         <label for="date">Payment Date</label>
-        <input type="date" name="date" id="date" required />
+        <input type="date" name="date" id="date" value={todayStr} required />
       </div>
 
       <button class="btn btn-add" type="submit">Add Transaction</button>
@@ -52,6 +56,7 @@
 </div>
 
 <script>
+  import { renderHighlight } from "../lib/highlight.util";
   import { renderTransaction } from "../lib/util";
   const modalContainer = document.querySelector(
     ".modal-overlay"
@@ -117,6 +122,7 @@
         transactionForm.reset();
         modalContainer.classList.remove("active");
         await renderTransaction();
+        await renderHighlight();
       } catch (err) {
         console.log(err);
       }
@@ -148,6 +154,7 @@
         transactionForm.reset();
         modalContainer.classList.remove("active");
         await renderTransaction();
+        await renderHighlight();
       } catch (err) {
         console.log(err);
       }
