@@ -1,3 +1,5 @@
+import { renderHighlight } from "./highlight.util";
+
   type TransactionType = "expense" | "income";
   export interface Transaction {
     id: string;
@@ -92,6 +94,7 @@ export const renderTransaction = async () => {
           if(confirm(msg)=== true){
             await deleteTransaction(el.id)
             renderTransaction()
+            renderHighlight()
             return
           }
         })

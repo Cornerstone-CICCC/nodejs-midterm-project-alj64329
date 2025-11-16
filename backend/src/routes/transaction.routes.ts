@@ -7,6 +7,7 @@ import transactionController from '../controllers/transaction.controller'
 const transactionRouter = Router()
 
 transactionRouter.get('/search',transactionController.searchByKeyword)
+transactionRouter.get('/recent',transactionController.getRecentTransaction)
 transactionRouter.get('/',transactionController.getTransactionsByUserId)
 transactionRouter.get('/:id', transactionController.getTransactionById)
 transactionRouter.post('/', transactionController.addTransaction)

@@ -82,6 +82,30 @@ const getTransactionById = (req: Request<{id:string}>, res: Response) => {
 
     res.status(200).json(transaction)
 }
+/**
+ * Get this month transactions
+ * 
+ * @route GET /transaction/recent
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {void} Returns transaction data.
+ */
+const getRecentTransaction = (req: Request, res: Response) => {
+    const today = new Date()
+    const year = today.getFullYear().toString()
+    const month = today.getMonth()+1<10? `0${today.getMonth()+1}`:`${today.getMonth()+1}`
+    const yearMounth = `${year}-${month}`
+
+    const transaction = transactionModel.getThisMonthTransaction(yearMounth)
+    if(!transaction){
+        res.status(404).json({
+            message:"Transaction not found"
+        })
+        return
+    }
+
+    res.status(200).json(transaction)
+}
 
 /**
  * Update transaction by id
@@ -101,8 +125,7 @@ const updateTransactionById = async(req: Request<{id: string}, {}, Partial<Trans
   const {type, name, category, amount, date} = req.body
   const transaction = await transactionModel.updateTransaction(id, {type, name, category, amount, date})
   if (!transaction) {
-    res.status(404).json({
-        message:"Transaction does not exist!"})
+    res.status(404).json([])
     return
   }
   res.status(201).json(transaction)
@@ -161,5 +184,6 @@ export default {
   getTransactionById,
   updateTransactionById,
   deleteTransactionById,
-  searchByKeyword
+  searchByKeyword,
+  getRecentTransaction
 }

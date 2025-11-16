@@ -7,7 +7,7 @@ export interface Transaction{
     name: string,
     category:ExpenseType| null,
     amount: number,
-    date: Date
+    date: string
 }
 
 export type ExpenseType = "housing" | "transportation" | "entertainment" |"insurance"|"groceries"|"phone"|"clothing"|"others"
