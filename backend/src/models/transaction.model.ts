@@ -70,9 +70,9 @@ class TransactionModel {
     return updatedTransaction
   }
 
-  getThisMonthTransaction(yearMounth:string){
+  getThisMonthTransaction(yearMounth:string, userId:string){
     
-    const filtered = this.transactions.filter(t => t.date.includes(yearMounth))
+    const filtered = this.transactions.filter(t => t.date.includes(yearMounth)&&t.userId===userId)
 
     if(!filtered) return false
 

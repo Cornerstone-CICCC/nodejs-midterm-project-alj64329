@@ -55,7 +55,7 @@ export const renderHighlight= async()=>{
     div.className="highlight-border"
 
     div.innerHTML=`
-    <div class="fw-bold">Recent Transaction</div>
+    <div class="fw-bold pb-3">Recent Transaction</div>
     <div class="counter-text">${count}</div>
     `
     document.querySelector(".highlight-container")?.append(div)
@@ -65,7 +65,7 @@ export const renderHighlight= async()=>{
     const div = document.createElement('div')
     div.className="highlight-border"
     div.innerHTML =`
-    <div class="fw-bold">Recent Balance</div>
+    <div class="fw-bold pb-3">Recent Balance</div>
     <div class="balance-text">$ ${balance.toFixed(2)}</div>
     `
     document.querySelector(".highlight-container")?.append(div)

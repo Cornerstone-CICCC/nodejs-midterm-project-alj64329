@@ -16,7 +16,7 @@ input[name="search"]:focus{
 }
 
 .main-container{
-    min-height: 89vh;
+    min-height: 100vh;
     max-width: 1800px;
     display: flex;
     justify-content: center;
@@ -26,7 +26,7 @@ input[name="search"]:focus{
     display: none;
     position: absolute;
     z-index: 5;
-    top: 100%;
+    top: 105%;
     max-height: 150px;
     overflow-y: auto; 
     left: 0;
@@ -146,7 +146,7 @@ table tr div.edit-box.active{
     color: white;
     font-size: 12px;
     width: 120px;
-    height: 120px;
+    height: auto;
     display:flex;
     flex-direction: column;
     justify-content: center;
@@ -169,8 +169,8 @@ table tr div.edit-box.active{
 
     .highlight-border{
         font-size: 20px;
-        width: 160px;
-        height: 160px;
+        width: 200px;
+        height: auto;
     }
     .title-text{
         font-size: 25px;
@@ -181,7 +181,7 @@ table tr div.edit-box.active{
 @media screen and (min-width:768px) {
 
     .highlight-border{
-        width: 200px;
+        width: 350px;
         height: auto;
     }
 }

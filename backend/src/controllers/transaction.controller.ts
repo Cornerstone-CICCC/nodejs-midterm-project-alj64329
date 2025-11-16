@@ -91,12 +91,20 @@ const getTransactionById = (req: Request<{id:string}>, res: Response) => {
  * @returns {void} Returns transaction data.
  */
 const getRecentTransaction = (req: Request, res: Response) => {
+    const  userId  = req.session?.userId
+    console.log("Session at /transactions:", req.session);
+    if (!userId||!userId.trim()) {
+      res.status(500).json({
+        message:"Missing user id!"
+    })
+      return
+    }
     const today = new Date()
     const year = today.getFullYear().toString()
     const month = today.getMonth()+1<10? `0${today.getMonth()+1}`:`${today.getMonth()+1}`
     const yearMounth = `${year}-${month}`
 
-    const transaction = transactionModel.getThisMonthTransaction(yearMounth)
+    const transaction = transactionModel.getThisMonthTransaction(yearMounth, userId)
     if(!transaction){
         res.status(404).json({
             message:"Transaction not found"
